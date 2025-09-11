@@ -1,0 +1,15 @@
+curl -X GET \
+  http://localhost:8080/books \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-encoding: gzip, deflate, br' \
+  -H 'accept-language: en-US,en;q=0.9' \
+  -H 'authorization: Bearer PyQaF-BCnGRTMdf_G0scq27UDm95gRybEik2zeQeZxyBXFXLpxymiROudAsrxP6RLhHZE0wjaiG2fTvQG4BmipIp3U12DbjdiPBkG_Re0tDW07A9FpzU8F1qAVF06Odrakhj-8eTOSTG0uIYnRH6R0Y6XUeBwKAzQjmSJtdDQGCPY39SayK-gsx1E6LrUwlApyk0zrbPqtXc8SYvyVs2JLMJdiCBkyRbGoHGb-OcdAFwbG71FE8OB7nXacQ11_6WywIh_tPDKy2utT0Cv1TUvoaKvIQ0XwoaBctmIoJqyg7tOXd7XwX_V0HSW3SMQ0wn-Yiil7df6yM9Wn5jx26jpWQLkGLDio0Qi4K8VO6oDUN23mqAt8KBtQq3Q0AgIEj22cZcOH_N_TpWgFS7Rw12piAfWlL39dZve3JCckf3rMQgUYozDbkyOZsLjEPqLG6liKzr56ZWfBotV_fVSpYExLmmUa3Aav58dSYDwNqQ_EsFx48IhM2poDTw1UaR3dBlfDELztUXMEMv5fZrPx3nutEAkeZYR5AL0M3SNPADJE_a4ZNx0PZNM7A6YJRLgPu2wW6W019L9x7RJAvBJaVXeSjtP4BIJZ5KvbKTrp393ppZPo8K3nw8D9x3K0aFwNtsBdggBtbp2Wla9ZavE7N1DqDfyUznizgH4Cw--NC1ogrAEIS3zjMQ1FAJ3ACcgbCcaNdIA4eBoqyLY52axX_BV6Os7kPHjSKgDUfNlOGZxJjxD40TrmVNHIO-sCERVmQJ5M7XE51eBKgzpMBBIpUFVnSheEH76_48CWONLz59chQ8ZdkW' \
+  -H 'cache-control: no-cache' \
+  -H 'connection: keep-alive' \
+  -H 'host: portfolio.vagrant.sravz.com' \
+  -H 'origin: https://web.vagrant.sravz.com' \
+  -H 'postman-token: da138dac-0e06-da30-f832-49ded052d59d' \
+  -H 'referer: https://web.vagrant.sravz.com/' \
+  -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36' \
+  -H 'x-return: n' \
+  -H 'x-user: testuser'

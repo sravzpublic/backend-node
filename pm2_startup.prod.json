@@ -1,0 +1,12 @@
+{
+    "apps" : [{
+      "name"        : "Sravz",
+      "script"      : "./server.js",
+      "watch"       : true,
+      "log_date_format"  : "YYYY-MM-DD HH:mm Z",
+      "ignore_watch" : ["*.log", "npm-debug.*", "public", "node_modules"],
+      "instances"   : 1,
+      "exec_mode" : "fork_mode",
+      "cwd" : "/home/vagrant/sravz/backend-node/"
+    }]
+  }

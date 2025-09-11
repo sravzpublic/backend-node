@@ -1,0 +1,1798 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "ngx-admin Backend Bundle API",
+    "description": "ngx-admin Backend Bundle API",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "basePath": "/api",
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "authentication"
+    },
+    {
+      "name": "Users",
+      "description": "users api"
+    },
+    {
+      "name": "Settings",
+      "description": "settings api"
+    },
+    {
+      "name": "Orders",
+      "description": "Orders api"
+    },
+    {
+      "name": "Orders Aggregated",
+      "description": "Orders Aggregated api"
+    },
+    {
+      "name": "Orders Profit",
+      "description": "Orders Profit api"
+    },
+    {
+      "name": "Order Types",
+      "description": "Order Types api"
+    },
+    {
+      "name": "Order Status",
+      "description": "Order Status api"
+    },
+    {
+      "name": "Countries",
+      "description": "Counties api"
+    },
+    {
+      "name": "Traffic Aggregated",
+      "description": "Traffic Aggregated api"
+    },
+    {
+      "name": "User Activity",
+      "description": "User Activity api"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "Authorization",
+      "description": "Bearer <my own JWT token>"
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "User Authentication returning a JWT",
+        "description": "Authenticate a user",
+        "parameters": [
+          {
+            "name": "loginDto",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/loginDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "$ref": "#/definitions/Token"
+            }
+          }
+        }
+      }
+    },
+    "/auth/sign-up": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Sign up new user",
+        "description": "Sign up new user",
+        "parameters": [
+          {
+            "name": "signUpDto",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/signUpDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "$ref": "#/definitions/Token"
+            }
+          }
+        }
+      }
+    },
+    "/auth/reset-pass": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Change password",
+        "description": "Change password for current user",
+
+        "parameters": [
+          {
+            "name": "changePasswordDto",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/changePasswordDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error message",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/request-pass": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Request password",
+        "description": "Request password by email",
+        "parameters": [
+          {
+            "name": "requestPasswordDto",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error message",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/sign-out": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Sign out",
+        "description": "Sign out",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/refresh-token": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Refresh user token",
+        "description": "Refresh user token",
+        "parameters": [
+          {
+            "name": "refreshTokenDTO",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string"
+                    },
+                    "refresh_token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error message",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Users list",
+        "description": "Gets users list",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "filterByfirstName",
+            "in": "query",
+            "description": "Should filter by first name field",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filterBylastName",
+            "in": "query",
+            "description": "Should filter by last name field",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filterBylogin",
+            "in": "query",
+            "description": "Should filter by user name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filterByemail",
+            "in": "query",
+            "description": "Should filter by email",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filterByage",
+            "in": "query",
+            "description": "Should filter by age",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filterBystreet",
+            "in": "query",
+            "description": "Should filter by street",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filterBycity",
+            "in": "query",
+            "description": "Should filter by city",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filterByzipcode",
+            "in": "query",
+            "description": "Should filter by zip code",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Should sort by field",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "description": "Order direction ASC / DESC",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return list of users (filtered users by query params) and total count of users in response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "allOf": [
+                      {
+                        "$ref": "#/definitions/User"
+                      },
+                      {
+                        "properties": {
+                          "settings": {
+                            "type": "object",
+                            "$ref": "#/definitions/Settings"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "totalCount": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Add new user",
+        "description": "Add new user",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "NewUserDto",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/users/current": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get current user",
+        "description": "Get current user",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return current user",
+            "schema": {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/User"
+                },
+                {
+                  "properties": {
+                    "settings": {
+                      "type": "object",
+                      "$ref": "#/definitions/Settings"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update current user",
+        "description": "Update current user",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "UserDto",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return current user",
+            "schema": {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/User"
+                },
+                {
+                  "properties": {
+                    "settings": {
+                      "type": "object",
+                      "$ref": "#/definitions/Settings"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "409": {
+            "description": "Email is exist",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                },
+                "metadata": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "field": {
+                          "type": "email"
+                        },
+                        "type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get user by id",
+        "description": "Get user by id",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "description": "User Id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return user by id",
+            "schema": {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/User"
+                },
+                {
+                  "properties": {
+                    "settings": {
+                      "type": "object",
+                      "$ref": "#/definitions/Settings"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update current user",
+        "description": "Update current user",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "UserDto",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return edited user",
+            "schema": {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/User"
+                },
+                {
+                  "properties": {
+                    "settings": {
+                      "type": "object",
+                      "$ref": "#/definitions/Settings"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "409": {
+            "description": "Email is exist",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                },
+                "metadata": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "field": {
+                          "type": "email"
+                        },
+                        "type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Delete user by id",
+        "description": "Delete user by id",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "description": "User Id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return user by id",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/settings/current": {
+      "get": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Get settings for current user",
+        "description": "Get settings for current user",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return user settings",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "themeName": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Get settings for current user",
+        "description": "Get settings for current user",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "SettingsDto",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "themeName": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return edited settings",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "themeName": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Orders list",
+        "description": "Gets orders list",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "filterByname",
+            "in": "query",
+            "description": "Should filter by name field",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filterBytype",
+            "in": "query",
+            "description": "Should filter by type field",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filterBystatus",
+            "in": "query",
+            "description": "Should filter by status name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filterBycountry",
+            "in": "query",
+            "description": "Should filter by country",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filterBysum",
+            "in": "query",
+            "description": "Should filter by sum",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filterBydate",
+            "in": "query",
+            "description": "Should filter by date",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Should sort by field",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "description": "Order direction ASC / DESC",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return list of orders (filtered orders by query params) and total count of orders in response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "$ref": "#/definitions/Order"
+                  }
+                },
+                "totalCount": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Add new order",
+        "description": "Add new order",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "OrderDto",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/OrderDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get new order",
+            "schema": {
+              "$ref": "#/definitions/Order"
+            }
+          }
+        }
+      }
+    },
+    "/orders/{id}": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Order",
+        "description": "Gets order",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Should return order",
+            "schema": {
+              "$ref": "#/definitions/Order"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Edit order",
+        "description": "Edit order",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "OrderDto",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Order"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Should return edited user",
+            "schema": {
+              "$ref": "#/definitions/OrderDto"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Delete order",
+        "description": "Delete order",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete order",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders-aggregated": {
+      "get": {
+        "tags": [
+          "Orders Aggregated"
+        ],
+        "summary": "Orders list",
+        "description": "Gets orders list",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "aggregation",
+            "in": "query",
+            "description": "Should filter by period of time. Default value : year",
+            "schema": {
+              "type": "string",
+              "default": "year"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return list of orders",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "axisXLabels": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "chartLabel": {
+                  "type": "string"
+                },
+                "lines": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "values": {
+                        "type": "array",
+                        "items": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders-aggregated/profit": {
+      "get": {
+        "tags": [
+          "Orders Aggregated"
+        ],
+        "summary": "Profit list data",
+        "description": "Gets profit list data",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "aggregation",
+            "in": "query",
+            "description": "Should filter by period of time. Default value : year",
+            "schema": {
+              "type": "string",
+              "default": "year"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return list of aggregated profit data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "axisXLabels": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "chartLabel": {
+                  "type": "string"
+                },
+                "lines": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "values": {
+                        "type": "array",
+                        "items": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders-aggregated/country": {
+      "get": {
+        "tags": [
+          "Orders Aggregated"
+        ],
+        "summary": "Country list data",
+        "description": "Gets country list data",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "countryCode",
+            "in": "query",
+            "description": "Should filter by country code",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return list of aggregated country",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "orderType": {
+                    "type": "string"
+                  },
+                  "count": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders-aggregated/summary": {
+      "get": {
+        "tags": [
+          "Orders Aggregated"
+        ],
+        "summary": "Orders summary count",
+        "description": "Gets summary count of orders",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return list of aggregated country",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "today": {
+                  "type": "number"
+                },
+                "lastMonth": {
+                  "type": "number"
+                },
+                "lastWeek": {
+                  "type": "number"
+                },
+                "marketplace": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders-profit": {
+      "get": {
+        "tags": [
+          "Orders Profit"
+        ],
+        "summary": "Profit data list",
+        "description": "Gets profit data list",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return list of aggregated profit data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "axisXLabels": {
+                  "type": "string"
+                },
+                "chartLabel": {
+                  "type": "string"
+                },
+                "lines": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "values": {
+                        "type": "array",
+                        "items": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders-profit/short": {
+      "get": {
+        "tags": [
+          "Orders Profit"
+        ],
+        "summary": "Profit data list for 2 month",
+        "description": "Gets profit data list for 2 month",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return list of aggregated profit data for 2 month",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "axisXLabels": {
+                  "type": "string"
+                },
+                "chartLabel": {
+                  "type": "string"
+                },
+                "lines": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "values": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "aggregatedData": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "number"
+                      },
+                      "title": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders-profit/summary": {
+      "get": {
+        "tags": [
+          "Orders Profit"
+        ],
+        "summary": "Profit data summary",
+        "description": "Gets profit data summary",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return list of aggregated profit data summary",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "weekCommentsProfit": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "number"
+                    },
+                    "trend": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "weekOrdersProfit": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "number"
+                    },
+                    "trend": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "todayProfit": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "number"
+                    },
+                    "trend": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/order-types": {
+      "get": {
+        "tags": [
+          "Order Types"
+        ],
+        "summary": "List of Order Types",
+        "description": "Gets List of Order Types",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return List of Order Types",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/order-statuses": {
+      "get": {
+        "tags": [
+          "Order Status"
+        ],
+        "summary": "List of Order Status",
+        "description": "Gets List of Order Status",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return List of Order Status",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/countries": {
+      "get": {
+        "tags": [
+          "Countries"
+        ],
+        "summary": "List of Countries",
+        "description": "Gets List of Countries",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return List of Countries",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/traffic-aggregated": {
+      "get": {
+        "tags": [
+          "Traffic Aggregated"
+        ],
+        "summary": "Traffic Aggregated",
+        "description": "Traffic Aggregated",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "Should filter by period of time. Default value : year",
+            "schema": {
+              "type": "string",
+              "default": "year"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return Aggregated Traffic",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "number"
+                  },
+                  "period": {
+                    "type": "string"
+                  },
+                  "trend": {
+                    "type": "number"
+                  },
+                  "comparison": {
+                    "type": "object",
+                    "properties": {
+                      "currentPeriod": {
+                        "type": "number"
+                      },
+                      "currentValue": {
+                        "type": "number"
+                      },
+                      "previousPeriod": {
+                        "type": "number"
+                      },
+                      "previousValue": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user-activity": {
+      "get": {
+        "tags": [
+          "User Activity"
+        ],
+        "summary": "User Activity",
+        "description": "User Activity",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Should filter by period of time. Default value : year",
+            "schema": {
+              "type": "string",
+              "default": "year"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return User Activity data",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pagesVisit": {
+                    "type": "number"
+                  },
+                  "label": {
+                    "type": "number"
+                  },
+                  "trend": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "loginDto": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "signUpDto": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "fullName": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "confirmPassword": {
+          "type": "string"
+        }
+      }
+    },
+    "changePasswordDto": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "type": "string"
+        },
+        "confirmPassword": {
+          "type": "string"
+        }
+      }
+    },
+    "Token": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "object",
+          "properties": {
+            "expires_in": {
+              "type": "integer"
+            },
+            "access_token": {
+              "type": "string"
+            },
+            "refresh_token": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "age": {
+          "type": "integer"
+        },
+        "login": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "address": {
+          "type": "object",
+          "properties": {
+            "street": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            },
+            "zipCode": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "Settings": {
+      "type": "object",
+      "properties": {
+        "themeName": {
+          "type": "string"
+        }
+      }
+    },
+    "UserDto": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "age": {
+          "type": "integer"
+        },
+        "role": {
+          "type": "string"
+        },
+        "fullName": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "address": {
+          "type": "object",
+          "properties": {
+            "street": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            },
+            "zipCode": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "Order": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "sum": {
+          "type": "object",
+          "properties": {
+            "currency": {
+              "type": "string"
+            },
+            "value": {
+              "type": "number"
+            }
+          }
+        },
+        "country": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "OrderDto": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "sum": {
+          "type": "object",
+          "properties": {
+            "currency": {
+              "type": "string"
+            },
+            "value": {
+              "type": "number"
+            }
+          }
+        },
+        "country": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
