@@ -75,8 +75,8 @@ module.exports = {
 		],
         smartThingsOauth: {
         	oauth2Options: {client: {
-                id: 'f416faf9-cee7-4d22-880b-b6205fd2b966',
-                secret: '4450ae1e-c8cb-4538-b548-c361d5f34cac'
+                id: '',
+                secret: ''
         	},
         	auth: {
         		tokenHost: 'https://graph.api.smartthings.com'
