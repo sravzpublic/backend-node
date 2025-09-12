@@ -87,25 +87,22 @@ mongoose.connection.on('connected', function () {
 
   // Start real-time quotes
   if (process.env.ENABLE_REDIS_CONNECTION === "true") {
-    let redisHosts = process.env.REDIS_HOSTS.split(",")
+    let redisHosts = process.env.REDIS_HOSTS ? process.env.REDIS_HOSTS.split(",") : [];
     let redisConfig = {
       port: 6379, // Redis port
-      host: redisHosts[Math.floor(Math.random()*redisHosts.length)], // Redis host
+      host: redisHosts.length > 0 ? redisHosts[Math.floor(Math.random()*redisHosts.length)] : 'localhost', // Redis host
       db: 0,
-      password: "***"
+      password: process.env.REDIS_PASSWORD || ""
     };
     logger.info(`Redis config used: ${JSON.stringify(redisConfig)}`)
-    redisConfig.password = process.env.REDIS_PASSWORD;
+    let redisClient;
     try {
       logger.info("Connecting to Redis");
-      var redisClient = new Redis(redisConfig);
+      redisClient = new Redis(redisConfig);
       redisClient.subscribe("realtime-quotes", (err, count) => {
         if (err) {
-          // Just like other commands, subscribe() can fail for some reasons,
-          // ex network issues.
           logger.error("Failed to subscribe: %s", err.message);
         } else {
-          // `count` represents the number of channels this client are currently subscribed to.
           logger.info(
             `Redis Client subscribed successfully! This client is currently subscribed to ${count} channels.`
           );
@@ -113,23 +110,24 @@ mongoose.connection.on('connected', function () {
       });
       redisClient.on("message", (channel, message) => {
         if (io.engine.clientsCount > 0) {
-          io.to('realtime-quotes-room').emit('realtime-quotes-room', message); // emit an event for all connected clients
+          io.to('realtime-quotes-room').emit('realtime-quotes-room', message);
         }
       });
       redisClient.on('error', function (err) {
         logger.error('Redis client connection error: ' + err);
-      })
+        // Do not throw or exit, just log
+      });
       redisClient.on('close', function (msg) {
         logger.info('Redis client connection closed: ' + msg);
-      })
+      });
       redisClient.on('connect', () => {
         logger.info('Redis client connection established');
-      })
-    }
-    catch (e) {
+      });
+    } catch (e) {
       logger.error("Unable to connect to redis");
       logger.error(e);
-    }  
+      // Do not throw or exit, just log
+    }
   }
   /* configure global socket io handlers */
   io.on('connection',  (socket) => {
