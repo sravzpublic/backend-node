@@ -92,7 +92,8 @@ mongoose.connection.on('connected', function () {
       port: 6379, // Redis port
       host: redisHosts.length > 0 ? redisHosts[Math.floor(Math.random()*redisHosts.length)] : 'localhost', // Redis host
       db: 0,
-      password: process.env.REDIS_PASSWORD || ""
+      password: process.env.REDIS_PASSWORD || "",
+      connectTimeout: 60000 // 1 minute timeout in ms
     };
     logger.info(`Redis config used: ${JSON.stringify(redisConfig)}`)
     let redisClient;
