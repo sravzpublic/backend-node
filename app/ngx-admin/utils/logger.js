@@ -9,36 +9,35 @@ const config = require('../../../config/config');
 const fs = require('fs');
 const winston = require('winston');
 
-const fileLogger = config.logger.file; // config.get('logger.file');
-const consoleLogger = config.logger.console; // config.get('logger.console');
+const fileLogger = config.logger.file;
+const consoleLogger = config.logger.console;
 const logDir = `${appRoot}/${fileLogger.logDir}`;
 const logFileUrl = `${logDir}/${fileLogger.logFile}`;
 
-winston.addColors(winston.config.npm.colors);
-
+// Create log directory if it doesn't exist
 if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir);
+  fs.mkdirSync(logDir, { recursive: true });
 }
 
 const logger = winston.createLogger({
-  transports: [
-    new winston.transports.File({
-      level: fileLogger.level,
-      filename: logFileUrl,
-      handleExceptions: true,
-      json: true,
-      maxsize: fileLogger.maxsize,
-      maxFiles: fileLogger.maxFiles,
-      colorize: false,
-      timestamp: () => (new Date()).toLocaleString('en-US', { hour12: false }),
+  level: consoleLogger.level, // Use console level as default
+  format: winston.format.combine(
+    winston.format.colorize(),
+    winston.format.timestamp({
+      format: 'YYYY-MM-DD HH:mm:ss'
     }),
+    winston.format.errors({ stack: true }),
+    winston.format.printf(({ timestamp, level, message, ...meta }) => {
+      return `${timestamp} [${level}]: ${message} ${Object.keys(meta).length ? JSON.stringify(meta, null, 2) : ''}`;
+    })
+  ),
+  defaultMeta: { service: 'sravz-backend' },
+  transports: [
+    // Console transport only
     new winston.transports.Console({
       level: consoleLogger.level,
       handleExceptions: true,
-      json: false,
-      colorize: true,
-      timestamp: () => (new Date()).toLocaleString('en-US', { hour12: false }),
-    }),
+    })
   ],
   exitOnError: false,
 });

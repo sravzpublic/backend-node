@@ -63,6 +63,14 @@ function decipherResetPasswordToken(ciphered) {
 }
 
 function generateResponseTokens(user) {
+  // Defensive check to prevent crashes
+  if (!user) {
+    throw new Error('User object is required for token generation');
+  }
+  if (!user.id) {
+    throw new Error('User must have an id property for token generation');
+  }
+  
   const normalizedUser = { id: user.id,
     role: user.role,
     suid: user.suid

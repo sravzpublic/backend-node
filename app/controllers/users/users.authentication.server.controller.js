@@ -273,6 +273,11 @@ exports.oauthCallbackTokenVerfiy = function () {
 				if (err) {
 					res.send(err);
 				}
+				// Check if user is defined before generating tokens
+				if (!user) {
+					console.error('User is undefined in login callback');
+					return res.status(500).send({ error: 'Authentication failed - user not found' });
+				}
 				const response = { token: cipherHelper.generateResponseTokens(user) };
 				res.send(response);
 
@@ -341,8 +346,13 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
 						});
 
 						// And save the user
-						user.save(function (err) {
-							return done(err, user);
+						user.save(function (err, savedUser) {
+							if (err) {
+								console.error('Error saving new OAuth user:', err);
+								return done(err, null);
+							}
+							console.log('Successfully created new OAuth user:', savedUser._id);
+							return done(null, savedUser);
 						});
 					});
 				} else {

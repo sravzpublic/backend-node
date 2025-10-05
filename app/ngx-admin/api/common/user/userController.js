@@ -27,12 +27,25 @@ router.post('/', adminGuard, (req, res) => {
 });
 
 router.get('/current', (req, res) => {
+  if (req.user.email === 'guest123@guest.com') {
+    return res.send(req);
+  }
+  
   userService
     .findById(req.user.id)
-    .then(user => res.send(user));
+    .then(user => res.send(user))
+    .catch(err => {
+      console.error('Error finding current user:', err.message);
+      res.status(400).send({ error: 'Invalid user ID or user not found' });
+    });
 });
 
 router.put('/current', (req, res) => {
+  // Prevent editing guest user
+  if (req.user.email === 'guest123@guest.com') {
+    return res.status(403).send({ error: 'Guest user profile cannot be modified' });
+  }
+  
   userService
     .editCurrentUser(req.body, req.user.id)
     .then(user => res.send(user))
@@ -47,7 +60,11 @@ router.put('/current', (req, res) => {
 router.get('/:id', adminGuard, (req, res) => {
   userService
     .findById(req.params.id)
-    .then(user => res.send(user));
+    .then(user => res.send(user))
+    .catch(err => {
+      console.error('Error finding user by ID:', err.message);
+      res.status(400).send({ error: 'Invalid user ID or user not found' });
+    });
 });
 
 router.put('/:id', adminGuard, (req, res) => {

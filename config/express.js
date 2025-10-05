@@ -65,6 +65,55 @@ module.exports = function () {
 		next();
 	});
 
+	// Request/Response tracing middleware - Log all HTTP requests and responses
+	app.use(function (req, res, next) {
+		const startTime = Date.now();
+		const requestId = Math.random().toString(36).substr(2, 9);
+		
+		// Log incoming request
+		logger.info(`[REQ-${requestId}] ${req.method} ${req.originalUrl}`, {
+			method: req.method,
+			url: req.originalUrl,
+			headers: req.headers,
+			query: req.query,
+			body: req.body,
+			ip: req.ip,
+			userAgent: req.get('User-Agent'),
+			timestamp: new Date().toISOString()
+		});
+
+		// Capture the original res.end function
+		const originalEnd = res.end;
+		const originalSend = res.send;
+		let responseBody = '';
+
+		// Override res.send to capture response body
+		res.send = function(body) {
+			responseBody = body;
+			return originalSend.call(this, body);
+		};
+
+		// Override res.end to capture when response is sent
+		res.end = function(chunk, encoding) {
+			const duration = Date.now() - startTime;
+			
+			// Log outgoing response
+			logger.info(`[RES-${requestId}] ${req.method} ${req.originalUrl} - ${res.statusCode}`, {
+				method: req.method,
+				url: req.originalUrl,
+				statusCode: res.statusCode,
+				duration: `${duration}ms`,
+				responseHeaders: res.getHeaders(),
+				responseBody: responseBody || chunk,
+				timestamp: new Date().toISOString()
+			});
+
+			return originalEnd.call(this, chunk, encoding);
+		};
+
+		next();
+	});
+
 	app.options("/*", function (req, res, next) {
 		setAccessControlHeaders(req, res);
 		res.sendStatus(200);

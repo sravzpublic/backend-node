@@ -29,6 +29,11 @@ class BaseRepository {
   }
 
   findById(id) {
+    // Validate ObjectID format before using it
+    if (!id || !ObjectID.isValid(id)) {
+      return Promise.resolve(null);
+    }
+    
     return this.dbClient
       .then(db => db
         .collection(this.collection)
@@ -50,6 +55,11 @@ class BaseRepository {
   }
 
   edit(id, item) {
+    // Validate ObjectID format before using it
+    if (!id || !ObjectID.isValid(id)) {
+      return Promise.reject(new Error('Invalid ID format'));
+    }
+    
     return this.dbClient
       .then(db => db
         .collection(this.collection)
@@ -57,6 +67,11 @@ class BaseRepository {
   }
 
   delete(id) {
+    // Validate ObjectID format before using it
+    if (!id || !ObjectID.isValid(id)) {
+      return Promise.reject(new Error('Invalid ID format'));
+    }
+    
     return this.dbClient
       .then(db => db
         .collection(this.collection)

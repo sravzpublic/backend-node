@@ -1,0 +1,12 @@
+//devcontainer.json
+{
+    "name": "backend-node",
+    "dockerComposeFile": "../../localhost.docker-compose.yml",
+    "service": "backend-node",
+    "workspaceFolder": "/workspace/backend-node",
+    "shutdownAction": "none",
+    "extensions": [
+        "dbaeumer.vscode-eslint",
+        "VisualStudioExptTeam.vscodeintellicode"
+    ],
+}

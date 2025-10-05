@@ -13,6 +13,11 @@ class UserRepository extends BaseRepository {
   }
 
   findById(id) {
+    // Validate ObjectID format before using it
+    if (!id || !ObjectID.isValid(id)) {
+      return Promise.resolve(null);
+    }
+    
     return this.dbClient
       .then(db => db
         .collection(this.collection)
@@ -55,6 +60,11 @@ class UserRepository extends BaseRepository {
   }
 
   changePassword(id, salt, passwordHash) {
+    // Validate ObjectID format before using it
+    if (!id || !ObjectID.isValid(id)) {
+      return Promise.reject(new Error('Invalid user ID format'));
+    }
+    
     return this.dbClient
       .then(db => db
         .collection(this.collection)

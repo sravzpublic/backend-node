@@ -12,6 +12,9 @@ var init = require('./config/init')(),
   logger = require('./app/ngx-admin/utils/logger'),
   Redis = require('ioredis');
 
+// Test the logger immediately after import
+logger.info('=== Logger Test: Server starting with updated Winston configuration ===');
+
 /**
  * Main application entry file.
  * Please note that the order of loading is important.
@@ -46,6 +49,37 @@ function logErrors(err, req, res, next) {
 // When successfully connected
 mongoose.connection.on('connected', function () {
   logger.info('Mongoose default connection opened');
+  
+  // Test MongoDB connection with a simple query
+  mongoose.connection.db.admin().ping(function(err, result) {
+    if (err) {
+      logger.error('MongoDB ping test failed: ' + err);
+    } else {
+      logger.info('MongoDB ping test successful: ' + JSON.stringify(result));
+      
+      // Connect to sravz database and list collections
+      const sravzDb = mongoose.connection.client.db('sravz');
+      sravzDb.listCollections().toArray(function(err, collections) {
+        if (err) {
+          logger.error('Failed to list sravz database collections: ' + err);
+        } else {
+          logger.info('Sravz database collections count: ' + collections.length);
+          logger.info('Sravz database collections: ' + collections.map(c => c.name).join(', '));
+          
+          // Also try to connect to the current database collections
+          mongoose.connection.db.listCollections().toArray(function(err, currentCollections) {
+            if (err) {
+              logger.error('Failed to list current database collections: ' + err);
+            } else {
+              logger.info('Current database (' + mongoose.connection.db.databaseName + ') collections count: ' + currentCollections.length);
+              logger.info('Current database collections: ' + currentCollections.map(c => c.name).join(', '));
+            }
+          });
+        }
+      });
+    }
+  });
+  
   // Init the express application
   var app = require('./config/express')();
   app.use(logErrors);

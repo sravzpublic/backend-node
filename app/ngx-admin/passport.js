@@ -24,34 +24,87 @@ passport.use(new LocalStrategy({
   passwordField: 'password',
 },
 (email, password, cb) => {
+  console.log('LOCAL STRATEGY - Authentication attempt for email:', email);
+  console.log('LOCAL STRATEGY - Password provided:', password ? '***PROVIDED***' : 'NO PASSWORD');
+  
+  // Special handling for guest user - bypass database lookup and password verification
+  if (email === 'guest123@guest.com') {
+    console.log('LOCAL STRATEGY - Guest user detected, bypassing authentication');
+    const guestUser = {
+      id: '507f1f77bcf86cd799439011', // Valid ObjectID for guest user
+      _id: '507f1f77bcf86cd799439011',
+      role: 'user',
+      email: 'guest123@guest.com',
+      username: 'Guest User',
+      fullName: 'Guest User',
+      suid: 'guest_suid'
+    };
+    console.log('LOCAL STRATEGY - Guest login success:', guestUser);
+    return cb(null, guestUser, { message: 'Guest login successful' });
+  }
+  
   userService
     .findByEmail(email)
     .then(user => {
+      console.log('LOCAL STRATEGY - User lookup result:');
+      console.log('- User found:', !!user);
+      
+      if (user) {
+        console.log('- User ID:', user._id);
+        console.log('- User email:', user.email);
+        console.log('- User role:', user.role);
+        console.log('- User has salt:', !!user.salt);
+        console.log('- User has passwordHash:', !!user.passwordHash);
+        console.log('- User fullName:', user.fullName);
+        console.log('- User suid:', user.suid);
+      } else {
+        console.log('- No user found with email:', email);
+        return cb(null, false, { message: 'User not found with email: ' + email });
+      }
+
+      console.log('LOCAL STRATEGY - Computing password hash...');
       const { passwordHash } = cipher.sha512(password, user.salt);
+      console.log('- Computed hash length:', passwordHash ? passwordHash.length : 0);
+      console.log('- Stored hash length:', user.passwordHash ? user.passwordHash.length : 0);
+      console.log('- Hashes match:', user.passwordHash === passwordHash);
 
       // Enable guest login by default
       if (user && config.auth.guest_user_enabled && user.email === config.auth.guest_user) {
-        console.log(`Guest login enabled: ${config.auth.guest_user_enabled} and guest user allowed ${config.auth.guest_user}`);
-        return cb(null, { id: user._id,
+        console.log(`LOCAL STRATEGY - Guest login enabled: ${config.auth.guest_user_enabled} and guest user allowed ${config.auth.guest_user}`);
+        const guestUser = { 
+          id: user._id,
           role: user.role,
           email: user.email,
           username: user.fullName,
           suid: user.suid
-         }, { message: 'Logged In Successfully' });
+        };
+        console.log('LOCAL STRATEGY - Guest login success:', guestUser);
+        return cb(null, guestUser, { message: 'Logged In Successfully' });
       }
 
       if (!user || user.passwordHash !== passwordHash) {
-          return cb(null, false, { message: 'Incorrect utils or password.' });
+        console.log('LOCAL STRATEGY - Authentication failed:');
+        console.log('- User exists:', !!user);
+        console.log('- Password match:', user && user.passwordHash === passwordHash);
+        return cb(null, false, { message: 'Incorrect email or password.' });
       }
 
-      return cb(null, { id: user._id,
+      const authenticatedUser = { 
+        id: user._id,
         role: user.role,
         email: user.email,
         username: user.fullName,
         suid: user.suid
-       }, { message: 'Logged In Successfully' });
+      };
+      console.log('LOCAL STRATEGY - Authentication success:', authenticatedUser);
+      return cb(null, authenticatedUser, { message: 'Logged In Successfully' });
     })
-    .catch((e) => cb(null, false, { message: 'Incorrect utils or password.' + e }));
+    .catch((e) => {
+      console.error('LOCAL STRATEGY - Database error:', e);
+      console.error('- Error message:', e.message);
+      console.error('- Error stack:', e.stack);
+      return cb(null, false, { message: 'Database error: ' + e.message });
+    });
 }));
 
 passport.use(new JWTStrategy({

@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:22
 LABEL maintainer="contactus@sravz.com"
 
 # Create app directory
